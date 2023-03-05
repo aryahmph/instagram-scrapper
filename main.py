@@ -117,24 +117,41 @@ def load_more_comments(driver):
             break
 
 
+def join_comments(username):
+    # Open the JSON file
+    with open("data/" + username + ".json", 'r') as f:
+        # Decode the JSON data
+        data = json.load(f)
+
+    strs = []
+    for posts in data["posts"]:
+        for comments in posts["comments"]:
+            strs.append(comments["text"])
+            for replies in comments["replies"]:
+                strs.append(replies["text"])
+
+    return ', '.join(strs)
+
+
 def main():
-    load_dotenv()
-
-    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
-    driver.delete_all_cookies()
-
-    login(driver, os.environ.get('INSTAGRAM_USERNAME'), os.environ.get('INSTAGRAM_PASSWORD'))
-    time.sleep(5)
-
-    escape_after_login(driver)
-    time.sleep(5)
-
-    data = get_user(driver, os.environ.get('INSTAGRAM_TARGET_USERNAME'))
-    driver.quit()
-    json_str = json.dumps(data, cls=MyEncoder, indent=2)
-
-    with open(f'data/{data.username}.json', 'w') as file:
-        file.write(json_str)
+    print(join_comments("blenderartists"))
+    # load_dotenv()
+    #
+    # driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+    # driver.delete_all_cookies()
+    #
+    # login(driver, os.environ.get('INSTAGRAM_USERNAME'), os.environ.get('INSTAGRAM_PASSWORD'))
+    # time.sleep(5)
+    #
+    # escape_after_login(driver)
+    # time.sleep(5)
+    #
+    # data = get_user(driver, os.environ.get('INSTAGRAM_TARGET_USERNAME'))
+    # driver.quit()
+    # json_str = json.dumps(data, cls=MyEncoder, indent=2)
+    #
+    # with open(f'data/{data.username}.json', 'w') as file:
+    #     file.write(json_str)
 
 
 if __name__ == "__main__":
